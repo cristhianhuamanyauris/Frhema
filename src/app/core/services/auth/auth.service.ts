@@ -129,18 +129,33 @@ export class AuthService {
   async register(email: string, password: string, nombre_usuario: string) {
     const { data, error } = await this.supabaseService.client.auth.signUp({
       email,
-      password,
-      options: {
-        data: {
-          nombre_usuario
-        }
-      }
+      password
     });
 
     if (error) throw error;
 
+    const user = data.user;
+
+    if (!user) {
+      throw new Error("No se pudo crear el usuario en auth.");
+    }
+
+    // 🔥 INSERTAR PERFIL EN TABLA usuarios
+    const { error: e2 } = await this.supabaseService.client
+      .from("usuarios")
+      .insert({
+        id_usuario: user.id,           // uuid de auth.users
+        nombre_usuario: nombre_usuario,
+        id_rol: null,                  // SIN ROL de momento
+        nombre: null,
+        apellido: null
+      });
+
+    if (e2) throw e2;
+
     return data;
   }
+
 
   // ============================
   // LOGOUT
