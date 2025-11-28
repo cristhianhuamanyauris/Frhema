@@ -485,4 +485,8 @@ export class ProveedoresComponent implements OnInit {
       alert('No se pudo cambiar el estado.');
     }
   }
+  exportarExcel() {
+    console.log("Exportar a Excel (pendiente)");
+  }
+
 }
