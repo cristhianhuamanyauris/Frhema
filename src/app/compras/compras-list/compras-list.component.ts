@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ComprasService } from '../../core/services/compras/compras.service';
@@ -12,7 +12,7 @@ import { DetalleCompra } from '../../core/models/detalle-compra.model';
 @Component({
   selector: 'app-compras-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgFor, NgIf],
   templateUrl: './compras-list.component.html',
 })
 export class ComprasListComponent implements OnInit {
@@ -24,7 +24,7 @@ export class ComprasListComponent implements OnInit {
   // Compra actual
   compra: Compra = {
     id_proveedor: 0,
-    id_usuario: '', // se cargará desde localStorage
+    id_usuario: '',
     nro_documento: '',
     total: 0
   };
@@ -54,9 +54,6 @@ export class ComprasListComponent implements OnInit {
     this.compras = await this.comprasService.getCompras();
   }
 
-  // =========================================
-  // 🔍 OBTENER NOMBRE DE PRODUCTO POR ID
-  // =========================================
   getNombreProducto(id: number): string {
     const p = this.productos.find(prod => prod.id_producto === id);
     return p ? p.nombre : '';
@@ -71,10 +68,15 @@ export class ComprasListComponent implements OnInit {
       return;
     }
 
-    this.nuevoDetalle.subtotal = 
+    const subtotal =
       this.nuevoDetalle.cantidad * this.nuevoDetalle.costo_unitario;
 
-    this.detalles.push({ ...this.nuevoDetalle });
+    this.detalles.push({
+      id_producto: this.nuevoDetalle.id_producto,
+      cantidad: this.nuevoDetalle.cantidad,
+      costo_unitario: this.nuevoDetalle.costo_unitario,
+      subtotal   // <-- solo para mostrarlo en la tabla
+    });
 
     this.nuevoDetalle = { id_producto: 0, cantidad: 1, costo_unitario: 0 };
 
@@ -87,12 +89,12 @@ export class ComprasListComponent implements OnInit {
   }
 
   calcularTotal() {
-    this.compra.total = this.detalles.reduce((sum, d) => sum + (d.subtotal ?? 0), 0);
+    this.compra.total = this.detalles.reduce(
+      (sum, d) => sum + (d.subtotal ?? 0),
+      0
+    );
   }
 
-  // ============================
-  // LIMPIAR FORMULARIO
-  // ============================
   limpiarFormulario() {
     this.compra = {
       id_proveedor: 0,
@@ -123,7 +125,11 @@ export class ComprasListComponent implements OnInit {
     }
 
     try {
-      const id_compra = await this.comprasService.registrarCompra(this.compra, this.detalles);
+      const id_compra = await this.comprasService.registrarCompra(
+        this.compra,
+        this.detalles
+      );
+
       alert('Compra registrada #' + id_compra);
 
       this.limpiarFormulario();

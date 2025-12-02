@@ -56,42 +56,44 @@ export class ComprasService {
   // ============================
   async registrarCompra(compra: Compra, detalles: DetalleCompra[]) {
 
-    // 1️⃣ Crear compra
+    // 1️⃣ Insertar la compra
     const { data: compraData, error: compraError } = await this.supabase.client
       .from(this.TABLE)
-      .insert([compra])
-      .select()
+      .insert({
+        id_proveedor: compra.id_proveedor,
+        id_usuario: compra.id_usuario,
+        nro_documento: compra.nro_documento,
+        total: compra.total
+      })
+      .select("id_compra")
       .single();
 
     if (compraError) throw compraError;
 
     const id_compra = compraData.id_compra;
 
-    // 2️⃣ Insertar detalles
+    // 2️⃣ Insertar cada detalle SIN SUBTOTAL
     const detallesInsert = detalles.map(d => ({
-      ...d,
-      id_compra
+      id_compra,
+      id_producto: d.id_producto,
+      cantidad: d.cantidad,
+      costo_unitario: d.costo_unitario
+      // subtotal NO se envía porque es generated column
     }));
 
-    const { error: detalleError } = await this.supabase.client
+    const { error: detError } = await this.supabase.client
       .from(this.TABLE_DET)
       .insert(detallesInsert);
 
-    if (detalleError) throw detalleError;
-
-    // 3️⃣ Trigger ya aumenta el stock automáticamente
+    if (detError) throw detError;
 
     return id_compra;
   }
 
   // ============================
-  // OBTENER RESUMEN DE COMPRAS POR PRODUCTO
+  // RESUMEN DE COMPRAS POR PRODUCTO
   // ============================
-  async getResumenComprasPorProducto(id_producto: number): Promise<{
-    cantidad_total: number;
-    precio_unitario_promedio: number;
-    precio_total_compra: number;
-  }> {
+  async getResumenComprasPorProducto(id_producto: number) {
     const { data, error } = await this.supabase.client
       .from(this.TABLE_DET)
       .select('cantidad, costo_unitario, subtotal')
@@ -99,9 +101,14 @@ export class ComprasService {
 
     if (error) throw error;
 
-    const cantidad_total = data?.reduce((sum, d) => sum + (d.cantidad || 0), 0) || 0;
-    const precio_total_compra = data?.reduce((sum, d) => sum + (d.subtotal || 0), 0) || 0;
-    const precio_unitario_promedio = cantidad_total > 0 ? precio_total_compra / cantidad_total : 0;
+    const cantidad_total =
+      data?.reduce((sum, d) => sum + (d.cantidad || 0), 0) || 0;
+
+    const precio_total_compra =
+      data?.reduce((sum, d) => sum + (d.subtotal || 0), 0) || 0;
+
+    const precio_unitario_promedio =
+      cantidad_total > 0 ? precio_total_compra / cantidad_total : 0;
 
     return {
       cantidad_total,

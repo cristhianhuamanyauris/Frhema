@@ -1,0 +1,92 @@
+<div class="p-4 space-y-4">
+
+  <h2 class="text-2xl font-bold text-gray-800">Reporte de Compras</h2>
+
+  <!-- FILTROS -->
+  <div class="bg-white p-4 rounded-xl shadow border space-y-4">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      <!-- FECHA DESDE -->
+      <div>
+        <label class="text-sm font-semibold text-gray-700">Desde</label>
+        <input type="date"
+               [(ngModel)]="desde"
+               class="w-full border rounded px-3 py-2">
+      </div>
+
+      <!-- FECHA HASTA -->
+      <div>
+        <label class="text-sm font-semibold text-gray-700">Hasta</label>
+        <input type="date"
+               [(ngModel)]="hasta"
+               class="w-full border rounded px-3 py-2">
+      </div>
+
+      <!-- PROVEEDOR -->
+      <div>
+        <label class="text-sm font-semibold text-gray-700">Proveedor</label>
+        <select [(ngModel)]="proveedorSeleccionado"
+                class="w-full border rounded px-3 py-2">
+          <option [ngValue]="null">Todos</option>
+          <option *ngFor="let p of proveedores" [ngValue]="p.id_proveedor">
+            {{ p.nombre }}
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <button (click)="filtrar()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+      Generar reporte
+    </button>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="bg-white p-4 rounded-xl shadow border">
+
+    <h3 class="text-lg font-bold text-gray-800 mb-3">
+      Resultados (Total: {{ totalComprado | currency:'PEN' }})
+    </h3>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse min-w-[700px]">
+        <thead>
+          <tr class="bg-gray-100 text-left text-sm font-semibold">
+            <th class="px-3 py-2">Fecha</th>
+            <th class="px-3 py-2">Proveedor</th>
+            <th class="px-3 py-2">Documento</th>
+            <th class="px-3 py-2">Producto</th>
+            <th class="px-3 py-2">Cantidad</th>
+            <th class="px-3 py-2">Costo</th>
+            <th class="px-3 py-2">Subtotal</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of resultados" class="border-b">
+            <td class="px-3 py-2">{{ formatear(item.fecha) }}</td>
+            <td class="px-3 py-2">{{ item.proveedor }}</td>
+            <td class="px-3 py-2">{{ item.nro_documento || '—' }}</td>
+            <td class="px-3 py-2">{{ item.producto }}</td>
+            <td class="px-3 py-2">{{ item.cantidad }}</td>
+            <td class="px-3 py-2">{{ item.costo_unitario | currency:'PEN' }}</td>
+            <td class="px-3 py-2 font-semibold text-blue-600">
+              {{ item.subtotal | currency:'PEN' }}
+            </td>
+          </tr>
+
+          <tr *ngIf="resultados.length === 0">
+            <td colspan="7" class="text-center text-gray-500 py-4">
+              No hay resultados
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>

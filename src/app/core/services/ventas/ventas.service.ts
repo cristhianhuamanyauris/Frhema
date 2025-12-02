@@ -1,108 +1,4 @@
-/*
-import { Injectable } from '@angular/core';
-import { SupabaseClientService } from '../auth/supabase.client';
-import { Venta } from '../../models/venta.model';
-import { DetalleVenta } from '../../models/detalle-venta.model';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class VentasService {
-
-  private TABLE = 'ventas';
-  private TABLE_DET = 'detalle_ventas';
-  private TABLE_MOV = 'movimientos_stock';
-
-  constructor(private supabase: SupabaseClientService) {}
-
-  // =========================================
-  // LISTAR VENTAS
-  // =========================================
-  async getVentas(): Promise<any[]> {
-    const { data, error } = await this.supabase.client
-      .from(this.TABLE)
-      .select(`
-        id_venta,
-        fecha,
-        total,
-        tipo_comprobante,
-        nro_comprobante,
-        clientes ( nombre )
-      `)
-      .order('id_venta', { ascending: false });
-
-    if (error) throw error;
-    return data!;
-  }
-
-  // =========================================
-  // LISTAR DETALLE
-  // =========================================
-  async getDetalle(id_venta: number): Promise<any[]> {
-    const { data, error } = await this.supabase.client
-      .from(this.TABLE_DET)
-      .select(`
-        id_detalle_venta,
-        cantidad,
-        precio_unitario,
-        descuento,
-        subtotal,
-        productos ( nombre )
-      `)
-      .eq('id_venta', id_venta);
-
-    if (error) throw error;
-    return data!;
-  }
-
-  // =========================================
-  // REGISTRAR VENTA + DETALLE
-  // =========================================
-  async registrarVenta(venta: Venta, detalles: DetalleVenta[]) {
-
-    // 1️⃣ Crear venta
-    const { data: ventaData, error: ventaError } = await this.supabase.client
-      .from(this.TABLE)
-      .insert([venta])
-      .select()
-      .single();
-
-    if (ventaError) throw ventaError;
-
-    const id_venta = ventaData.id_venta;
-
-    // 2️⃣ Insertar detalles
-    const detallesInsert = detalles.map(d => ({
-      ...d,
-      id_venta
-    }));
-
-    const { error: detalleError } = await this.supabase.client
-      .from(this.TABLE_DET)
-      .insert(detallesInsert);
-
-    if (detalleError) throw detalleError;
-
-    // El trigger ya descuenta stock automáticamente
-
-    // 3️⃣ Registrar movimiento de stock opcional
-    for (const det of detalles) {
-      await this.supabase.client
-        .from(this.TABLE_MOV)
-        .insert([
-          {
-            id_producto: det.id_producto,
-            tipo: 'VENTA',
-            cantidad: det.cantidad,
-            referencia: `Venta ${id_venta}`
-          }
-        ]);
-    }
-
-    return id_venta;
-  }
-}
-*/
 // src/app/core/services/ventas/ventas.service.ts
 import { Injectable } from '@angular/core';
 import { SupabaseClientService } from '../auth/supabase.client';
@@ -323,4 +219,54 @@ export class VentasService {
     if (error) throw error;
     return data || [];
   }
+  // =========================================
+  // REPORTE DE VENTAS (Filtrado profesional)
+  // =========================================
+  async getReporteVentas(filtros: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    id_cliente?: number;
+    id_usuario?: string;
+    tipo_comprobante?: string;
+  }) {
+    let query = this.supabase.client
+      .from(this.TABLE)
+      .select(`
+        *,
+        clientes (
+          id_cliente,
+          nombre,
+          documento
+        ),
+        usuarios (
+          id_usuario,
+          nombre_usuario,
+          nombre,
+          apellido
+        )
+      `)
+      .order("fecha", { ascending: false });
+
+    // FILTROS
+    if (filtros.fecha_inicio)
+      query = query.gte("fecha", filtros.fecha_inicio);
+
+    if (filtros.fecha_fin)
+      query = query.lte("fecha", filtros.fecha_fin);
+
+    if (filtros.id_cliente)
+      query = query.eq("id_cliente", filtros.id_cliente);
+
+    if (filtros.id_usuario)
+      query = query.eq("id_usuario", filtros.id_usuario);
+
+    if (filtros.tipo_comprobante)
+      query = query.eq("tipo_comprobante", filtros.tipo_comprobante);
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    return data;
+  }
+
 }

@@ -1,0 +1,80 @@
+<div class="p-4 md:p-6 space-y-6">
+
+  <h1 class="text-2xl font-bold text-gray-800">📦 Reporte de Inventario</h1>
+  <p class="text-gray-600">Estado general del inventario, vencimientos y movimientos.</p>
+
+  <!-- ================= -->
+  <!-- TARJETAS RESUMEN -->
+  <!-- ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+    <div class="p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+      <h3 class="text-sm font-semibold text-gray-500">Stock Crítico</h3>
+      <p class="text-3xl font-bold text-red-600 mt-1">{{ stockCritico.length }}</p>
+    </div>
+
+    <div class="p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+      <h3 class="text-sm font-semibold text-gray-500">Por Vencer (30 días)</h3>
+      <p class="text-3xl font-bold text-orange-500 mt-1">{{ porVencer.length }}</p>
+    </div>
+
+    <div class="p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+      <h3 class="text-sm font-semibold text-gray-500">Sin Movimiento</h3>
+      <p class="text-3xl font-bold text-blue-600 mt-1">{{ sinMovimiento.length }}</p>
+    </div>
+
+  </div>
+
+  <!-- =============== -->
+  <!-- INVENTARIO -->
+  <!-- =============== -->
+  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="font-semibold text-gray-800 text-lg">Inventario Completo</h2>
+
+      <div class="space-x-2">
+        <button (click)="exportarExcel()"
+          class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm">
+          Excel
+        </button>
+
+        <button (click)="exportarPDF()"
+          class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 text-sm">
+          PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[600px] border-collapse">
+        <thead class="bg-gray-100 text-sm text-gray-600">
+          <tr>
+            <th class="p-3 text-left">Código</th>
+            <th class="p-3 text-left">Producto</th>
+            <th class="p-3 text-left">Stock</th>
+            <th class="p-3 text-left">Stock Mínimo</th>
+          </tr>
+        </thead>
+
+        <tbody class="text-sm">
+          <tr *ngFor="let p of inventarioCompleto" class="border-b hover:bg-gray-50">
+            <td class="p-3">{{ p.codigo }}</td>
+            <td class="p-3 font-medium text-gray-900">{{ p.nombre }}</td>
+            <td class="p-3">
+              <span [class]="p.stock_actual <= p.stock_minimo ? 'text-red-600 font-bold' : ''">
+                {{ p.stock_actual }}
+              </span>
+            </td>
+            <td class="p-3">{{ p.stock_minimo }}</td>
+          </tr>
+
+          <tr *ngIf="inventarioCompleto.length === 0">
+            <td colspan="4" class="p-4 text-center text-gray-400">No hay productos registrados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

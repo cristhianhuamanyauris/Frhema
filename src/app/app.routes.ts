@@ -115,12 +115,16 @@ export const routes: Routes = [
         .then(m => m.RegistroComponent)
   },
 
+  // ============================
+  // DASHBOARD PRINCIPAL
+  // ============================
   {
     path: "dashboard",
     canActivate: [AuthGuard],
     loadComponent: () =>
       import("./layout/dashboard-layout/dashboard-layout.component")
         .then(m => m.DashboardLayoutComponent),
+
     children: [
 
       // DASHBOARD GENERAL (todos los roles)
@@ -133,7 +137,9 @@ export const routes: Routes = [
         data: { roles: [1, 2, 3, 4, 5] }
       },
 
+      // ============================
       // INVENTARIO
+      // ============================
       {
         path: "productos",
         loadComponent: () =>
@@ -142,6 +148,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: [1, 3] }
       },
+
       {
         path: "categorias",
         loadComponent: () =>
@@ -150,6 +157,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: [1, 3] }
       },
+
       {
         path: "proveedores",
         loadComponent: () =>
@@ -159,7 +167,9 @@ export const routes: Routes = [
         data: { roles: [1, 3, 4] }
       },
 
+      // ============================
       // VENTAS
+      // ============================
       {
         path: "pos",
         loadComponent: () =>
@@ -168,6 +178,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: [1, 2] }
       },
+
       {
         path: "ventas",
         loadComponent: () =>
@@ -177,7 +188,9 @@ export const routes: Routes = [
         data: { roles: [1, 2] }
       },
 
+      // ============================
       // COMPRAS
+      // ============================
       {
         path: "compras",
         loadComponent: () =>
@@ -187,7 +200,9 @@ export const routes: Routes = [
         data: { roles: [1, 4] }
       },
 
+      // ============================
       // CLIENTES
+      // ============================
       {
         path: "clientes",
         loadComponent: () =>
@@ -197,7 +212,53 @@ export const routes: Routes = [
         data: { roles: [1, 2, 5] }
       },
 
-      // CONFIGURACIÓN (solo ADMIN)
+      // ============================
+      // REPORTES (módulo completo)
+      // Solo Admin (1) + Gerente (5)
+      // ============================
+      {
+        path: "reportes",
+        canActivate: [RoleGuard],
+        data: { roles: [1, 5] },
+        children: [
+
+          {
+            path: "ventas",
+            loadComponent: () =>
+              import("./reportes/ventas-reporte/ventas-reporte.component")
+                .then(m => m.VentasReporteComponent)
+          },
+
+          {
+            path: "compras",
+            loadComponent: () =>
+              import("./reportes/compras-reporte/compras-reporte.component")
+                .then(m => m.ComprasReporteComponent)
+          },
+
+          {
+            path: "inventario",
+            loadComponent: () =>
+              import("./reportes/inventario-reporte/inventario-reporte.component")
+                .then(m => m.InventarioReporteComponent)
+          },
+
+
+          // ============================
+          // ⚡ NUEVO: REPORTE GERENCIAL
+          // ============================
+          {
+            path: "gerencial",
+            loadComponent: () =>
+              import("./reportes/gerencial/gerencial.component")
+                .then(m => m.GerencialComponent)
+          }
+        ]
+      },
+
+      // ============================
+      // CONFIGURACIÓN
+      // ============================
       {
         path: "usuarios",
         loadComponent: () =>
