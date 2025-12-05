@@ -305,7 +305,7 @@ export const routes: Routes = [
           import("./clientes/clientes-list/clientes-list.component")
             .then(m => m.ClientesListComponent),
         canActivate: [RoleGuard],
-        data: { roles: [1, 2, 5] }
+        data: { roles: [1, 2] }
       },
 
       // ============================
