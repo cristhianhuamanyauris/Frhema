@@ -1,0 +1,16 @@
+import{a as l}from"./chunk-O5HRWX2F.js";import{O as d,T as m}from"./chunk-SFQMZB6G.js";import{h as o}from"./chunk-FK42CRUA.js";var b=class c{constructor(e){this.supabase=e}getProveedores(){return o(this,null,function*(){let{data:e,error:t}=yield this.supabase.client.from("proveedores").select("id_proveedor, nombre").order("nombre");if(t)throw t;return e||[]})}getComprasReporte(e,t,s){return o(this,null,function*(){let a=this.supabase.client.from("compras").select("id_compra");e&&(a=a.gte("fecha",e)),t&&(a=a.lte("fecha",t+" 23:59:59")),s&&(a=a.eq("id_proveedor",s));let{data:i,error:n}=yield a;if(n)throw n;if(!i||i.length===0)return{resultados:[],total:0};let f=i.map(r=>r.id_compra),{data:h,error:p}=yield this.supabase.client.from("detalle_compras").select(`
+        cantidad,
+        costo_unitario,
+        subtotal,
+        compras:compras (
+          fecha,
+          nro_documento,
+          id_proveedor,
+          proveedores:proveedores(nombre)
+        ),
+        productos:productos(nombre)
+      `).in("id_compra",f);if(p)throw p;let u=h.map(r=>({fecha:r.compras.fecha,nro_documento:r.compras.nro_documento,proveedor:r.compras.proveedores.nombre,producto:r.productos.nombre,cantidad:r.cantidad,costo_unitario:r.costo_unitario,subtotal:r.subtotal})),_=u.reduce((r,v)=>r+v.subtotal,0);return{resultados:u,total:_}})}getVentasReporte(e,t,s){return o(this,null,function*(){let a=this.supabase.client.from("ventas").select(`
+        *,
+        clientes:clientes(nombre, documento),
+        usuarios:usuarios(nombre_usuario)
+      `).gte("fecha",e).lte("fecha",t+" 23:59:59").order("fecha",{ascending:!1});s&&(a=a.eq("id_cliente",s));let{data:i,error:n}=yield a;if(n)throw n;return i||[]})}getStockCritico(){return o(this,null,function*(){let{data:e,error:t}=yield this.supabase.client.rpc("get_stock_critico");if(t)throw t;return e||[]})}getPorVencer(){return o(this,null,function*(){let{data:e,error:t}=yield this.supabase.client.rpc("get_por_vencer");if(t)throw t;return e||[]})}getSinMovimiento(){return o(this,null,function*(){let{data:e,error:t}=yield this.supabase.client.rpc("productos_sin_movimiento",{dias:30});if(t)throw t;return e||[]})}getInventarioCompleto(){return o(this,null,function*(){let{data:e,error:t}=yield this.supabase.client.rpc("get_inventario_completo");if(t)throw t;return e||[]})}getKPIs(){return o(this,null,function*(){let{data:e}=yield this.supabase.client.rpc("ventas_hoy"),{data:t}=yield this.supabase.client.rpc("ventas_mes"),{data:s}=yield this.supabase.client.rpc("compras_mes"),{data:a}=yield this.supabase.client.rpc("ventas_anio"),{data:i}=yield this.supabase.client.rpc("ticket_promedio_mes");return{ventasHoy:e||0,ventasMes:t||0,comprasMes:s||0,ventasAnio:a||0,ticketPromedio:i||0}})}getTopProductos(e=10){return o(this,null,function*(){let{data:t,error:s}=yield this.supabase.client.rpc("top_productos_vendidos",{limit_count:e});if(s)throw s;return t||[]})}getVentasPorCategoria(){return o(this,null,function*(){let{data:e,error:t}=yield this.supabase.client.rpc("ventas_por_categoria");if(t)throw t;return e||[]})}static \u0275fac=function(t){return new(t||c)(m(l))};static \u0275prov=d({token:c,factory:c.\u0275fac,providedIn:"root"})};export{b as a};
