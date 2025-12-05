@@ -1,4 +1,4 @@
-import{a as l}from"./chunk-O5HRWX2F.js";import{O as m,T as u}from"./chunk-SFQMZB6G.js";import{h as c}from"./chunk-FK42CRUA.js";var _=class d{constructor(t){this.supabase=t}TABLE="compras";TABLE_DET="detalle_compras";getCompras(){return c(this,null,function*(){let{data:t,error:o}=yield this.supabase.client.from(this.TABLE).select(`
+import{a as l}from"./chunk-M2GT5SNT.js";import{O as m,T as u}from"./chunk-SFQMZB6G.js";import{h as c}from"./chunk-FK42CRUA.js";var _=class d{constructor(t){this.supabase=t}TABLE="compras";TABLE_DET="detalle_compras";getCompras(){return c(this,null,function*(){let{data:t,error:o}=yield this.supabase.client.from(this.TABLE).select(`
         id_compra,
         fecha,
         nro_documento,

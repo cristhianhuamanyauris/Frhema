@@ -1,4 +1,4 @@
-import{a as l}from"./chunk-O5HRWX2F.js";import{O as d,T as p}from"./chunk-SFQMZB6G.js";import{h as n}from"./chunk-FK42CRUA.js";var m=class c{constructor(t){this.supabase=t}TABLE="ventas";TABLE_DET="detalle_ventas";TABLE_MOV="movimientos_stock";getVentas(){return n(this,null,function*(){let{data:t,error:e}=yield this.supabase.client.from(this.TABLE).select(`
+import{a as l}from"./chunk-M2GT5SNT.js";import{O as d,T as p}from"./chunk-SFQMZB6G.js";import{h as n}from"./chunk-FK42CRUA.js";var m=class c{constructor(t){this.supabase=t}TABLE="ventas";TABLE_DET="detalle_ventas";TABLE_MOV="movimientos_stock";getVentas(){return n(this,null,function*(){let{data:t,error:e}=yield this.supabase.client.from(this.TABLE).select(`
         id_venta,
         fecha,
         total,
