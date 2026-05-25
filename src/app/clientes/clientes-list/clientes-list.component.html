@@ -194,8 +194,14 @@
             type="text"
             [(ngModel)]="cliente.documento"
             name="documento"
-            class="w-full px-2.5 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 outline-none text-sm transition-all box-border focus:border-blue-600 focus:bg-white focus:ring-3 focus:ring-blue-100 hover:border-gray-400"
+            pattern="^[0-9]{7}$"
+            minlength="7"
+            maxlength="7"
+            placeholder="7 dígitos"
+            class="w-full px-2.5 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 outline-none text-sm transition-all
+                  focus:border-blue-600 focus:bg-white focus:ring-3 focus:ring-blue-100 hover:border-gray-400"
           />
+
         </div>
 
         <div class="mb-0">
@@ -204,8 +210,14 @@
             type="text"
             [(ngModel)]="cliente.telefono"
             name="telefono"
-            class="w-full px-2.5 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 outline-none text-sm transition-all box-border focus:border-blue-600 focus:bg-white focus:ring-3 focus:ring-blue-100 hover:border-gray-400"
+            pattern="^[0-9]{9}$"
+            minlength="9"
+            maxlength="9"
+            placeholder="9 dígitos"
+            class="w-full px-2.5 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 outline-none text-sm transition-all
+                  focus:border-blue-600 focus:bg-white focus:ring-3 focus:ring-blue-100 hover:border-gray-400"
           />
+
         </div>
 
         <div class="mb-0 col-span-2">
