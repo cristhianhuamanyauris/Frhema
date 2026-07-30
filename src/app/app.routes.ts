@@ -200,6 +200,13 @@ export const routes: Routes = [
       import('./auth/recuperar/recuperar.component')
         .then(m => m.RecuperarComponent)
   },
+    // 👇 AGREGAR ESTO
+  {
+    path: 'registro',
+    loadComponent: () =>
+      import('./auth/registro/registro.component')
+        .then(m => m.RegistroComponent)
+  },
 
   {
     path: 'reset-password',
